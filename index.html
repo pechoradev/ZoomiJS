@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZoomiJS v1.1.0 — свежий взгляд на модальные окна</title>
+    <meta name="description" content="Легкая JS библиотека для модальных окон с изображениями. Zoom, drag, независимые галереи. Минималистичный дизайн.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-camera-retro"></i>
+                <span>ZoomiJS</span>
+                <span class="version-badge">v1.1.0</span>
+            </div>
+            
+            <div class="header-actions">
+                <a href="https://yoomoney.ru/to/4100119401729712" target="_blank" class="donate-link">
+                    <i class="fas fa-mug-hot"></i>
+                    <span>Поддержать разработку</span>
+                </a>
+                
+                <a href="https://github.com/pechoradev/simple-image-modal" class="github-link" target="_blank">
+                    <i class="fab fa-github"></i>
+                    <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>ZoomiJS</h1>
+            <p>Элегантные модальные окна для изображений. Zoom, drag, независимые галереи. Без зависимостей.</p>
+            <div class="badges">
+                <span class="badge"><i class="fas fa-code-branch"></i> v1.1.0</span>
+                <span class="badge"><i class="fas fa-weight-hanging"></i> 6.8 KB</span>
+                <span class="badge"><i class="fas fa-cubes"></i> Zero deps</span>
+                <span class="badge"><i class="fas fa-layer-group"></i> Multi-gallery</span>
+                <span class="badge"><i class="fas fa-mouse-pointer"></i> Drag & Zoom</span>
+            </div>
+            <div style="margin-top: 2rem; display: flex; gap: 16px; justify-content: center;">
+                <a href="#demos" class="btn"><i class="fas fa-play"></i> Демо</a>
+                <a href="#installation" class="btn btn-outline"><i class="fas fa-download"></i> Установка</a>
+            </div>
+        </div>
+
+        <section id="demos">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-camera"></i>
+                    Посмотри, как это работает
+                </h2>
+                <p class="section-description">Три простых сценария использования. Кликай на изображения — всё интерактивно.</p>
+
+                <div class="demo-scenario">
+                    <div class="demo-header">
+                        <div class="demo-header-left">
+                            <span class="demo-number">01</span>
+                            <h3>Множественные селекторы</h3>
+                        </div>
+                        <span class="demo-badge">новое</span>
+                    </div>
+                    
+                    <div class="demo-content">
+                        <div class="demo-visual">
+                            <div class="image-mini-grid">
+                                <div class="mini-item">
+                                    <img src="media/1.jpg" alt="Пейзаж" class="demo-selector-1">
+                                    <span class="mini-label">.selector-1</span>
+                                </div>
+                                <div class="mini-item">
+                                    <img src="media/2.jpg" alt="Пейзаж" class="demo-selector-2">
+                                    <span class="mini-label">.selector-2</span>
+                                </div>
+                                <div class="mini-item">
+                                    <img src="media/3.jpg" alt="Пейзаж" class="demo-selector-3">
+                                    <span class="mini-label">.selector-3</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-info">
+                            <p class="demo-info-text">Изображения с разными классами открываются в общем модальном окне.</p>
+                            <div class="demo-code-snippet">
+                                <code>selector: '.demo-selector-1, .demo-selector-2, .demo-selector-3'</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-scenario">
+                    <div class="demo-header">
+                        <div class="demo-header-left">
+                            <span class="demo-number">02</span>
+                            <h3>Независимые галереи</h3>
+                        </div>
+                        <span class="demo-badge demo-badge-upd">обновление</span>
+                    </div>
+                    
+                    <div class="demo-content">
+                        <div class="demo-gallery-row">
+                            <div class="demo-gallery-card">
+                                <div class="gallery-card-header">
+                                    <i class="fas fa-tree"></i>
+                                    <span>Природа</span>
+                                    <span class="photo-count">3 фото</span>
+                                </div>
+                                <div class="gallery-card-images" id="gallery-1">
+                                    <img src="media/5.jpg" alt="Болото" class="gallery-1-img">
+                                    <img src="media/6.jpg" alt="Озеро" class="gallery-1-img">
+                                    <img src="media/7.jpg" alt="Горы" class="gallery-1-img">
+                                </div>
+                                <div class="gallery-code-hint">
+                                    <code>galleryContainer: '#gallery-1'</code>
+                                </div>
+                            </div>
+                            
+                            <div class="demo-gallery-card">
+                                <div class="gallery-card-header">
+                                    <i class="fas fa-city"></i>
+                                    <span>Города</span>
+                                    <span class="photo-count">3 фото</span>
+                                </div>
+                                <div class="gallery-card-images" id="gallery-2">
+                                    <img src="media/8.jpg" alt="Шоссе" class="gallery-2-img">
+                                    <img src="media/9.jpg" alt="Зима" class="gallery-2-img">
+                                    <img src="media/10.jpg" alt="Москва" class="gallery-2-img">
+                                </div>
+                                <div class="gallery-code-hint">
+                                    <code>galleryContainer: '#gallery-2'</code>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-info demo-info-full">
+                            <p class="demo-info-text">Каждая галерея живет своей жизнью — стрелки навигации появляются только внутри своей группы.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-scenario demo-scenario-last">
+                    <div class="demo-header">
+                        <div class="demo-header-left">
+                            <span class="demo-number">03</span>
+                            <h3>Одиночные изображения</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-content">
+                        <div class="demo-visual">
+                            <div class="single-mini-grid">
+                                <div class="single-mini-item">
+                                    <img src="media/1.jpg" alt="Фото 1" class="single-img">
+                                    <span>Фото 1</span>
+                                </div>
+                                <div class="single-mini-item">
+                                    <img src="media/2.jpg" alt="Фото 2" class="single-img">
+                                    <span>Фото 2</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="demo-info">
+                            <p class="demo-info-text">Без указания контейнера изображения открываются по одному — никаких стрелок, только изображение.</p>
+                            <div class="demo-note">
+                                <i class="fas fa-info-circle"></i>
+                                <span>galleryContainer не указан</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-images"></i> Тестовая галерея (с навигацией)</h2>
+            <div class="gallery-container" id="test-gallery">
+                <h4><i class="fas fa-camera"></i> Демо-галерея <span class="badge" style="background: var(--primary); color:white;">4 фото</span></h4>
+                <div class="gallery-row" id="main-gallery">
+                    <div class="gallery-item"><img src="media/1.jpg" alt="Горы" class="test-gallery-img"><div class="caption">Горы</div></div>
+                    <div class="gallery-item"><img src="media/2.jpg" alt="Море" class="test-gallery-img"><div class="caption">Море</div></div>
+                    <div class="gallery-item"><img src="media/3.jpg" alt="Город" class="test-gallery-img"><div class="caption">Город</div></div>
+                    <div class="gallery-item"><img src="media/4.jpg" alt="Озеро" class="test-gallery-img"><div class="caption">Озеро</div></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 16px; margin-top: 1rem;">
+                <span class="status status-success"><i class="fas fa-check"></i> Стрелки есть</span>
+                <span class="status status-info"><i class="fas fa-arrows-alt"></i> Drag & Zoom</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-ban" style="color: var(--accent);"></i> Исключение .no-modal</h2>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="gallery-item" style="width:200px;"><img src="media/1.jpg" alt="обычное" class="test-gallery-img"><div class="caption">Открывается</div></div>
+                <div class="gallery-item" style="width:200px;"><img src="media/1.jpg" alt="исключенное" class="no-modal"><div class="caption">Игнорируется</div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-sliders-h"></i> Управление</h2>
+            <div class="controls">
+                <button class="btn" onclick="openFirstImage()"><i class="fas fa-external-link-alt"></i> Открыть первое</button>
+                <button class="btn btn-outline" onclick="checkStatus()"><i class="fas fa-info-circle"></i> Статус</button>
+                <button class="btn btn-outline" onclick="resetZoom()"><i class="fas fa-search-minus"></i> Сбросить зум</button>
+            </div>
+        </div>
+
+        <section id="installation">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-download"></i> Установка</h2>
+                <div class="code-block">
+                    <span class="comment"># Клонировать</span><br>
+                    git clone https://github.com/pechora-dev/simple-image-modal.git<br><br>
+                    <span class="comment"># Или скачать</span><br>
+                    https://github.com/pechora-dev/simple-image-modal/raw/main/dist/simple-image-modal.min.js
+                </div>
+            </div>
+        </section>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-cog"></i> Настройки v1.1.0</h2>
+            <table class="options-table">
+                <thead><tr><th>Опция</th><th>Тип</th><th>По умолч.</th><th>Описание</th></tr></thead>
+                <tbody>
+                    <tr><td class="option-name">selector</td><td>string</td><td><span class="option-default">'img'</span></td><td>CSS селектор изображений</td></tr>
+                    <tr><td class="option-name">excludeSelector</td><td>string</td><td><span class="option-default">null</span></td><td>Исключения</td></tr>
+                    <tr><td class="option-name updated">galleryContainer</td><td>string|null</td><td><span class="option-default">null</span></td><td>Контейнер для группировки в галерею</td></tr>
+                    <tr><td class="option-name new">navButtonClass</td><td>string</td><td><span class="option-default">'simple-image-modal-nav'</span></td><td>Класс кнопок навигации</td></tr>
+                    <tr><td class="option-name">enableZoom</td><td>boolean</td><td><span class="option-default">true</span></td><td>Включить зум</td></tr>
+                    <tr><td class="option-name">maxZoom</td><td>number</td><td><span class="option-default">3</span></td><td>Макс. коэффициент</td></tr>
+                    <tr><td class="option-name">showCaption</td><td>boolean</td><td><span class="option-default">true</span></td><td>Показывать подпись</td></tr>
+                    <tr><td class="option-name">animationDuration</td><td>number</td><td><span class="option-default">300</span></td><td>Длительность анимации (мс)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-code-branch"></i> API Методы</h2>
+            <div class="code-block">
+                <span class="keyword">const</span> modal = <span class="keyword">new</span> <span class="function">SimpleImageModal</span>(options);<br>
+                modal.<span class="function">open</span>(imgElement);  <span class="comment">// открыть</span><br>
+                modal.<span class="function">close</span>();              <span class="comment">// закрыть</span><br>
+                modal.<span class="function">isOpen</span>();             <span class="comment">// статус</span><br>
+                modal.<span class="function">resetZoom</span>();          <span class="comment">// сброс зума</span><br>
+                modal.<span class="function">updateOptions</span>(newOptions);<br>
+                modal.<span class="function">destroy</span>();
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-code"></i> Примеры использования</h2>
+            <h3 class="card-subtitle"><i class="fas fa-mouse-pointer"></i> Множественные селекторы</h3>
+            <div class="code-block"><span class="keyword">new</span> SimpleImageModal({ selector: <span class="string">'.post-img, .product-img'</span> });</div>
+            <h3 class="card-subtitle"><i class="fas fa-layer-group"></i> Независимые галереи</h3>
+            <div class="code-block"><span class="keyword">new</span> SimpleImageModal({ selector:<span class="string">'.product1-img'</span>, galleryContainer:<span class="string">'#product1'</span> });</div>
+        </div>
+
+        <div class="support-section">
+            <div class="support-content">
+                <div class="support-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="support-text">
+                    <h3>Понравилась библиотека?</h3>
+                    <p>Я создаю open-source проекты в свободное время. Если моя работа оказалась полезной для тебя, поддержи развитие библиотеки — это вдохновляет на новые функции и обновления!</p>
+                </div>
+                <div class="support-action">
+                    <a href="https://yoomoney.ru/to/4100119401729712" target="_blank" class="support-button">
+                        <i class="fas fa-mug-hot"></i>
+                        <span>Угостить кофе</span>
+                    </a>
+                    <span class="support-note">🙏 Спасибо за поддержку!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Сделано с <i class="fas fa-heart" style="color: #f72585;"></i> для сообщества</p>
+        <p><a href="https://pechora-dev.ru" target="_blank">Pechora-Dev</a> © 2025 — 2026</p>
+    </footer>
+
+    <script src="zoomi.min.js"></script>
+    <script>
+        const testGallery = new SimpleImageModal({
+            selector: '.test-gallery-img',
+            galleryContainer: '#test-gallery',
+            excludeSelector: '.no-modal',
+            enableZoom: true,
+            maxZoom: 4,
+            showCaption: true,
+            animationDuration: 400
+        });
+
+        const gallery1 = new SimpleImageModal({
+            selector: '.gallery-1-img',
+            galleryContainer: '#gallery-1',
+            showCaption: true
+        });
+        const gallery2 = new SimpleImageModal({
+            selector: '.gallery-2-img',
+            galleryContainer: '#gallery-2',
+            showCaption: true
+        });
+        const singleImages = new SimpleImageModal({
+            selector: '.single-img',
+            showCaption: true
+        });
+        const multiSelectorModal = new SimpleImageModal({
+            selector: '.demo-selector-1, .demo-selector-2, .demo-selector-3',
+            showCaption: true
+        });
+
+        window.testGallery = testGallery;
+
+        function openFirstImage() {
+            const first = document.querySelector('.test-gallery-img');
+            if (first) testGallery.open(first);
+        }
+        function checkStatus() {
+            alert(testGallery.isOpen() ? '✅ Открыто' : '❌ Закрыто');
+        }
+        function resetZoom() {
+            testGallery.resetZoom();
+        }
+    </script>
+</body>
+</html>

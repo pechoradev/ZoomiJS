@@ -1,0 +1,571 @@
+﻿/**
+ * Simple Image Modal - Легкая библиотека для открытия изображений в модальном окне
+ * @module SimpleImageModal
+ * @author Pechora-Dev
+ * @site-author https://pechora-dev.ru
+ * @version 1.1.0
+ * @license MIT
+ */
+
+class SimpleImageModal {
+    constructor(options = {}) {
+        this.options = {
+            selector: 'img',
+            excludeSelector: null,
+            skipLinkedImages: true,
+            modalClass: 'simple-image-modal',
+            modalContentClass: 'simple-image-modal-content',
+            closeButtonClass: 'simple-image-modal-close',
+            captionClass: 'simple-image-modal-caption',
+            navButtonClass: 'simple-image-modal-nav',
+            animationDuration: 300,
+            closeOnClick: true,
+            closeOnEsc: true,
+            showCaption: true,
+            enableZoom: true,
+            maxZoom: 3,
+            galleryContainer: null,
+            ...options
+        };
+
+        this.modal = null;
+        this.modalImg = null;
+        this.modalCaption = null;
+        this.currentImage = null;
+        this.galleryImages = [];
+        this.currentIndex = -1;
+        this.scale = 1;
+        this.isDragging = false;
+        this.startX = 0;
+        this.startY = 0;
+        this.translateX = 0;
+        this.translateY = 0;
+        this.init();
+    }
+
+    init() {
+        this.createModal();
+        this.bindEvents();
+    }
+
+    createModal() {
+        this.modal = document.createElement('div');
+        this.modal.className = this.options.modalClass;
+        this.modal.style.cssText = `
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transition: opacity ${this.options.animationDuration}ms ease;
+            cursor: pointer;
+        `;
+
+        const modalContent = document.createElement('div');
+        modalContent.className = this.options.modalContentClass;
+        modalContent.style.cssText = `
+            position: relative;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 100vw;
+            max-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        `;
+
+        const imageContainer = document.createElement('div');
+        imageContainer.style.cssText = `
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+        `;
+
+        this.modalImg = document.createElement('img');
+        this.modalImg.style.cssText = `
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            user-select: none;
+            transition: transform ${this.options.animationDuration}ms ease;
+            cursor: ${this.options.enableZoom ? 'grab' : 'pointer'};
+            transform-origin: center center;
+        `;
+
+        const closeBtn = document.createElement('span');
+        closeBtn.className = this.options.closeButtonClass;
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 10000;
+            line-height: 1;
+            @media (max-width: 768px) {
+                top: 10px;
+                right: 20px;
+                font-size: 35px;
+            }
+            @media (max-width: 480px) {
+                top: 8px;
+                right: 15px;
+                font-size: 30px;
+            }
+        `;
+        closeBtn.onmouseover = () => closeBtn.style.color = '#bbb';
+        closeBtn.onmouseout = () => closeBtn.style.color = '#f1f1f1';
+
+        this.modalCaption = document.createElement('div');
+        this.modalCaption.className = this.options.captionClass;
+        this.modalCaption.style.cssText = `
+            margin: 10px auto;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            max-width: 90%;
+            word-wrap: break-word;
+            padding: 0 10px;
+            @media (max-width: 768px) {
+                font-size: 14px;
+                margin: 8px auto;
+            }
+            @media (max-width: 480px) {
+                font-size: 12px;
+                margin: 5px auto;
+            }
+        `;
+
+        imageContainer.appendChild(this.modalImg);
+        modalContent.appendChild(imageContainer);
+        modalContent.appendChild(closeBtn);
+        modalContent.appendChild(this.modalCaption);
+        this.modal.appendChild(modalContent);
+        document.body.appendChild(this.modal);
+
+        this.closeBtn = closeBtn;
+        this.modalContent = modalContent;
+        this.imageContainer = imageContainer;
+        this.prevBtn = null;
+        this.nextBtn = null;
+    }
+
+    createNavButtons() {
+        if (this.prevBtn || this.nextBtn) return;
+
+        this.prevBtn = document.createElement('button');
+        this.prevBtn.className = `${this.options.navButtonClass} ${this.options.navButtonClass}-prev`;
+        this.prevBtn.innerHTML = '&#10094;';
+        this.prevBtn.setAttribute('aria-label', 'Предыдущее изображение');
+        this.prevBtn.style.cssText = `
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 16px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 10001;
+            border-radius: 0 5px 5px 0;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+            @media (max-width: 768px) {
+                left: 10px;
+                padding: 12px 16px;
+                font-size: 20px;
+            }
+        `;
+        
+        this.nextBtn = document.createElement('button');
+        this.nextBtn.className = `${this.options.navButtonClass} ${this.options.navButtonClass}-next`;
+        this.nextBtn.innerHTML = '&#10095;';
+        this.nextBtn.setAttribute('aria-label', 'Следующее изображение');
+        this.nextBtn.style.cssText = `
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 16px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 10001;
+            border-radius: 5px 0 0 5px;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            &:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+            @media (max-width: 768px) {
+                right: 10px;
+                padding: 12px 16px;
+                font-size: 20px;
+            }
+        `;
+
+        this.prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.navigate(-1);
+        });
+
+        this.nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.navigate(1);
+        });
+
+        this.modalContent.appendChild(this.prevBtn);
+        this.modalContent.appendChild(this.nextBtn);
+    }
+
+    updateNavButtons() {
+        if (!this.options.galleryContainer) {
+            this.removeNavButtons();
+            return;
+        }
+
+        if (this.galleryImages.length <= 1) {
+            this.removeNavButtons();
+            return;
+        }
+
+        this.createNavButtons();
+    }
+
+    removeNavButtons() {
+        if (this.prevBtn) {
+            this.prevBtn.remove();
+            this.prevBtn = null;
+        }
+        if (this.nextBtn) {
+            this.nextBtn.remove();
+            this.nextBtn = null;
+        }
+    }
+
+    isInsideLink(img) {
+        if (!this.options.skipLinkedImages) return false;
+        
+        const parent = img.parentElement;
+        if (parent && parent.tagName === 'A') {
+            return true;
+        }
+        
+        const closestLink = img.closest('a');
+        return closestLink !== null;
+    }
+
+    collectGalleryImages(currentImg) {
+        if (!this.options.galleryContainer) {
+            return [currentImg];
+        }
+
+        const container = currentImg.closest(this.options.galleryContainer);
+        
+        if (!container) {
+            return [currentImg];
+        }
+
+        return Array.from(container.querySelectorAll(this.getSelectorString()))
+            .filter(img => !this.isExcluded(img) && !this.isInsideLink(img));
+    }
+
+    getSelectorString() {
+        return this.options.selector;
+    }
+
+    elementMatches(element, selector) {
+        if (!selector) return false;
+        return element.matches(selector);
+    }
+
+    bindEvents() {
+        document.addEventListener('click', (e) => {
+            const selectors = this.options.selector.split(',').map(s => s.trim());
+            let targetImg = null;
+            
+            for (const selector of selectors) {
+                const img = e.target.closest(selector);
+                if (img) {
+                    targetImg = img;
+                    break;
+                }
+            }
+            
+            if (targetImg && !this.isExcluded(targetImg)) {
+                if (this.isInsideLink(targetImg)) {
+                    return;
+                }
+                e.preventDefault();
+                this.open(targetImg);
+            }
+        });
+
+        if (this.options.closeOnClick) {
+            this.modal.addEventListener('click', (e) => {
+                if (this.prevBtn && this.prevBtn.contains(e.target)) return;
+                if (this.nextBtn && this.nextBtn.contains(e.target)) return;
+                
+                if (e.target === this.modal || 
+                    e.target === this.imageContainer || 
+                    e.target === this.modalContent ||
+                    (!this.modalImg.contains(e.target) && e.target !== this.closeBtn)) {
+                    this.close();
+                }
+            });
+        }
+
+        this.closeBtn.addEventListener('click', () => this.close());
+
+        if (this.options.closeOnEsc) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isOpen()) {
+                    this.close();
+                }
+                if (this.isOpen() && this.options.galleryContainer && this.galleryImages.length > 1) {
+                    if (e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        this.navigate(-1);
+                    } else if (e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.navigate(1);
+                    }
+                }
+            });
+        }
+
+        if (this.options.enableZoom) {
+            this.modalImg.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                this.zoom(delta);
+            });
+
+            let initialDistance = 0;
+            let initialScale = 1;
+
+            this.modalImg.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    initialDistance = this.getTouchDistance(e.touches);
+                    initialScale = this.scale;
+                } else if (e.touches.length === 1 && this.scale > 1) {
+                    this.isDragging = true;
+                    this.startX = e.touches[0].clientX - this.translateX;
+                    this.startY = e.touches[0].clientY - this.translateY;
+                    this.modalImg.style.cursor = 'grabbing';
+                }
+            });
+
+            this.modalImg.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDistance = this.getTouchDistance(e.touches);
+                    const scaleDelta = (currentDistance / initialDistance) * initialScale;
+                    this.scale = Math.min(this.options.maxZoom, Math.max(1, scaleDelta));
+                    this.updateImageTransform();
+                } else if (e.touches.length === 1 && this.isDragging && this.scale > 1) {
+                    e.preventDefault();
+                    this.translateX = e.touches[0].clientX - this.startX;
+                    this.translateY = e.touches[0].clientY - this.startY;
+                    this.updateImageTransform();
+                }
+            });
+
+            this.modalImg.addEventListener('touchend', (e) => {
+                if (e.touches.length === 0) {
+                    this.isDragging = false;
+                    this.modalImg.style.cursor = 'grab';
+                }
+            });
+
+            this.modalImg.addEventListener('mousedown', (e) => {
+                if (this.scale > 1) {
+                    this.isDragging = true;
+                    this.startX = e.clientX - this.translateX;
+                    this.startY = e.clientY - this.translateY;
+                    this.modalImg.style.cursor = 'grabbing';
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (this.isDragging && this.scale > 1) {
+                    this.translateX = e.clientX - this.startX;
+                    this.translateY = e.clientY - this.startY;
+                    this.updateImageTransform();
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    this.modalImg.style.cursor = 'grab';
+                }
+            });
+
+            this.modalImg.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+                if (this.scale > 1) {
+                    this.resetZoom();
+                } else {
+                    this.zoom(0.5);
+                }
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            if (this.isOpen() && this.scale === 1) {
+                this.resetZoom();
+            }
+        });
+    }
+
+    navigate(direction) {
+        if (this.galleryImages.length <= 1) return;
+
+        this.currentIndex = (this.currentIndex + direction + this.galleryImages.length) % this.galleryImages.length;
+        const nextImage = this.galleryImages[this.currentIndex];
+        
+        this.resetZoom();
+        this.modalImg.src = nextImage.src;
+        
+        if (this.options.showCaption) {
+            const caption = nextImage.getAttribute('alt') || nextImage.getAttribute('title') || '';
+            this.modalCaption.textContent = caption;
+            this.modalCaption.style.display = caption ? 'block' : 'none';
+        }
+
+        this.currentImage = nextImage;
+    }
+
+    getTouchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    isExcluded(img) {
+        if (!this.options.excludeSelector) return false;
+        return img.matches(this.options.excludeSelector);
+    }
+
+    open(img) {
+        this.currentImage = img;
+        this.modalImg.src = img.src;
+        
+        if (this.options.showCaption) {
+            const caption = img.getAttribute('alt') || img.getAttribute('title') || '';
+            this.modalCaption.textContent = caption;
+            this.modalCaption.style.display = caption ? 'block' : 'none';
+        }
+
+        this.galleryImages = this.collectGalleryImages(img);
+        this.currentIndex = this.galleryImages.indexOf(img);
+        this.updateNavButtons();
+
+        this.modal.style.display = 'flex';
+        
+        setTimeout(() => {
+            this.modal.style.opacity = '1';
+        }, 10);
+
+        document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+        this.modal.style.opacity = '0';
+        
+        setTimeout(() => {
+            this.modal.style.display = 'none';
+            document.body.style.overflow = '';
+            this.resetZoom();
+            this.galleryImages = [];
+            this.currentIndex = -1;
+            this.removeNavButtons();
+        }, this.options.animationDuration);
+    }
+
+    isOpen() {
+        return this.modal.style.display === 'flex';
+    }
+
+    zoom(delta) {
+        if (!this.options.enableZoom) return;
+        
+        this.scale = Math.min(this.options.maxZoom, Math.max(1, this.scale + delta));
+        
+        if (this.scale === 1) {
+            this.translateX = 0;
+            this.translateY = 0;
+        }
+        
+        this.updateImageTransform();
+    }
+
+    resetZoom() {
+        this.scale = 1;
+        this.translateX = 0;
+        this.translateY = 0;
+        this.updateImageTransform();
+    }
+
+    updateImageTransform() {
+        this.modalImg.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
+    }
+
+    updateOptions(options) {
+        this.options = { ...this.options, ...options };
+    }
+
+    destroy() {
+        if (this.modal && this.modal.parentNode) {
+            this.modal.parentNode.removeChild(this.modal);
+        }
+        document.body.style.overflow = '';
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SimpleImageModal;
+} else if (typeof define === 'function' && define.amd) {
+    define([], function() {
+        return SimpleImageModal;
+    });
+} else {
+    window.SimpleImageModal = SimpleImageModal;
+}
