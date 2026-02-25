@@ -1,13 +1,13 @@
 ﻿/**
- * Simple Image Modal - Легкая библиотека для открытия изображений в модальном окне
- * @module SimpleImageModal
+ * ZoomiJS - Легкая библиотека для открытия изображений в модальном окне
+ * @module Zoomi
  * @author Pechora-Dev
  * @site-author https://pechora-dev.ru
  * @version 1.1.0
  * @license MIT
  */
 
-class SimpleImageModal {
+class Zoomi {
     constructor(options = {}) {
         this.options = {
             selector: 'img',
@@ -561,11 +561,11 @@ class SimpleImageModal {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SimpleImageModal;
+    module.exports = Zoomi;
 } else if (typeof define === 'function' && define.amd) {
     define([], function() {
-        return SimpleImageModal;
+        return Zoomi;
     });
 } else {
-    window.SimpleImageModal = SimpleImageModal;
+    window.Zoomi = Zoomi;
 }

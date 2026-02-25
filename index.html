@@ -26,7 +26,7 @@
                     <span>Поддержать разработку</span>
                 </a>
                 
-                <a href="https://github.com/pechoradev/simple-image-modal" class="github-link" target="_blank">
+                <a href="https://github.com/pechoradev/ZoomiJS" class="github-link" target="_blank">
                     <i class="fab fa-github"></i>
                     <span>GitHub</span>
                 </a>
@@ -218,9 +218,9 @@
                 <h2 class="card-title"><i class="fas fa-download"></i> Установка</h2>
                 <div class="code-block">
                     <span class="comment"># Клонировать</span><br>
-                    git clone https://github.com/pechora-dev/simple-image-modal.git<br><br>
+                    git clone https://github.com/pechoradev/ZoomiJS.git<br><br>
                     <span class="comment"># Или скачать</span><br>
-                    https://github.com/pechora-dev/simple-image-modal/raw/main/dist/simple-image-modal.min.js
+                    https://github.com/pechoradev/ZoomiJS/blob/main/zoomi.min.js
                 </div>
             </div>
         </section>
@@ -233,7 +233,7 @@
                     <tr><td class="option-name">selector</td><td>string</td><td><span class="option-default">'img'</span></td><td>CSS селектор изображений</td></tr>
                     <tr><td class="option-name">excludeSelector</td><td>string</td><td><span class="option-default">null</span></td><td>Исключения</td></tr>
                     <tr><td class="option-name updated">galleryContainer</td><td>string|null</td><td><span class="option-default">null</span></td><td>Контейнер для группировки в галерею</td></tr>
-                    <tr><td class="option-name new">navButtonClass</td><td>string</td><td><span class="option-default">'simple-image-modal-nav'</span></td><td>Класс кнопок навигации</td></tr>
+                    <tr><td class="option-name new">navButtonClass</td><td>string</td><td><span class="option-default">'zoomi-image-modal-nav'</span></td><td>Класс кнопок навигации</td></tr>
                     <tr><td class="option-name">enableZoom</td><td>boolean</td><td><span class="option-default">true</span></td><td>Включить зум</td></tr>
                     <tr><td class="option-name">maxZoom</td><td>number</td><td><span class="option-default">3</span></td><td>Макс. коэффициент</td></tr>
                     <tr><td class="option-name">showCaption</td><td>boolean</td><td><span class="option-default">true</span></td><td>Показывать подпись</td></tr>
@@ -245,7 +245,7 @@
         <div class="card">
             <h2 class="card-title"><i class="fas fa-code-branch"></i> API Методы</h2>
             <div class="code-block">
-                <span class="keyword">const</span> modal = <span class="keyword">new</span> <span class="function">SimpleImageModal</span>(options);<br>
+                <span class="keyword">const</span> modal = <span class="keyword">new</span> <span class="function">Zoomi</span>(options);<br>
                 modal.<span class="function">open</span>(imgElement);  <span class="comment">// открыть</span><br>
                 modal.<span class="function">close</span>();              <span class="comment">// закрыть</span><br>
                 modal.<span class="function">isOpen</span>();             <span class="comment">// статус</span><br>
@@ -258,9 +258,9 @@
         <div class="card">
             <h2 class="card-title"><i class="fas fa-code"></i> Примеры использования</h2>
             <h3 class="card-subtitle"><i class="fas fa-mouse-pointer"></i> Множественные селекторы</h3>
-            <div class="code-block"><span class="keyword">new</span> SimpleImageModal({ selector: <span class="string">'.post-img, .product-img'</span> });</div>
+            <div class="code-block"><span class="keyword">new</span> Zoomi({ selector: <span class="string">'.post-img, .product-img'</span> });</div>
             <h3 class="card-subtitle"><i class="fas fa-layer-group"></i> Независимые галереи</h3>
-            <div class="code-block"><span class="keyword">new</span> SimpleImageModal({ selector:<span class="string">'.product1-img'</span>, galleryContainer:<span class="string">'#product1'</span> });</div>
+            <div class="code-block"><span class="keyword">new</span> Zoomi({ selector:<span class="string">'.product1-img'</span>, galleryContainer:<span class="string">'#product1'</span> });</div>
         </div>
 
         <div class="support-section">
@@ -290,7 +290,7 @@
 
     <script src="zoomi.min.js"></script>
     <script>
-        const testGallery = new SimpleImageModal({
+        const testGallery = new Zoomi({
             selector: '.test-gallery-img',
             galleryContainer: '#test-gallery',
             excludeSelector: '.no-modal',
@@ -300,21 +300,21 @@
             animationDuration: 400
         });
 
-        const gallery1 = new SimpleImageModal({
+        const gallery1 = new Zoomi({
             selector: '.gallery-1-img',
             galleryContainer: '#gallery-1',
             showCaption: true
         });
-        const gallery2 = new SimpleImageModal({
+        const gallery2 = new Zoomi({
             selector: '.gallery-2-img',
             galleryContainer: '#gallery-2',
             showCaption: true
         });
-        const singleImages = new SimpleImageModal({
+        const singleImages = new Zoomi({
             selector: '.single-img',
             showCaption: true
         });
-        const multiSelectorModal = new SimpleImageModal({
+        const multiSelectorModal = new Zoomi({
             selector: '.demo-selector-1, .demo-selector-2, .demo-selector-3',
             showCaption: true
         });
