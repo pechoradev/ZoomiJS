@@ -54,15 +54,6 @@
 | `getCurrentImage()` | — | `HTMLImageElement \| null` | Возвращает текущее открытое изображение |
 | `getGalleryImages()` | — | `HTMLImageElement[]` | Возвращает массив всех изображений в текущей галерее |
 
-Пример для галереи товаров:
-```
-const productGallery = new Zoomi({
-    selector: '.product-thumbnail',
-    gallery: '.product-gallery',
-    enableZoom: true,
-    showCaption: false
-});
-```
 
 ## 📦 Примеры использования
 
