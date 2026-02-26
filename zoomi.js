@@ -3,7 +3,7 @@
  * @module Zoomi
  * @author Pechora-Dev
  * @site-author https://pechora-dev.ru
- * @version 1.1.0
+ * @version 1.1.1
  * @license MIT
  */
 
@@ -25,6 +25,7 @@ class Zoomi {
             enableZoom: true,
             maxZoom: 3,
             galleryContainer: null,
+            swipeThreshold: 50,
             ...options
         };
 
@@ -40,6 +41,11 @@ class Zoomi {
         this.startY = 0;
         this.translateX = 0;
         this.translateY = 0;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.touchStartTime = 0;
+        this.isSwiping = false;
+        
         this.init();
     }
 
@@ -369,73 +375,107 @@ class Zoomi {
             });
         }
 
+        this.modalImg.addEventListener('mousedown', (e) => {
+            if (this.scale > 1) {
+                this.isDragging = true;
+                this.startX = e.clientX - this.translateX;
+                this.startY = e.clientY - this.translateY;
+                this.modalImg.style.cursor = 'grabbing';
+            } else if (this.galleryImages.length > 1) {
+                this.isSwiping = true;
+                this.touchStartX = e.clientX;
+                this.touchStartY = e.clientY;
+                this.touchStartTime = Date.now();
+                this.modalImg.style.cursor = 'ew-resize';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (this.isDragging && this.scale > 1) {
+                e.preventDefault();
+                this.translateX = e.clientX - this.startX;
+                this.translateY = e.clientY - this.startY;
+                this.updateImageTransform();
+            }
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            if (this.isDragging) {
+                this.isDragging = false;
+                this.modalImg.style.cursor = 'grab';
+            }
+            
+            if (this.isSwiping) {
+                const deltaX = e.clientX - this.touchStartX;
+                const deltaY = e.clientY - this.touchStartY;
+                const deltaTime = Date.now() - this.touchStartTime;
+                
+                this.handleSwipe(deltaX, deltaY, deltaTime);
+                
+                this.isSwiping = false;
+                this.modalImg.style.cursor = this.options.enableZoom ? 'grab' : 'pointer';
+            }
+        });
+
+        this.modalImg.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                this.touchStartDistance = this.getTouchDistance(e.touches);
+                this.touchStartScale = this.scale;
+            } else if (e.touches.length === 1) {
+                if (this.scale > 1) {
+                    this.isDragging = true;
+                    this.startX = e.touches[0].clientX - this.translateX;
+                    this.startY = e.touches[0].clientY - this.translateY;
+                    this.modalImg.style.cursor = 'grabbing';
+                } else if (this.galleryImages.length > 1) {
+                    this.isSwiping = true;
+                    this.touchStartX = e.touches[0].clientX;
+                    this.touchStartY = e.touches[0].clientY;
+                    this.touchStartTime = Date.now();
+                }
+            }
+        });
+
+        this.modalImg.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = this.getTouchDistance(e.touches);
+                const scaleDelta = (currentDistance / this.touchStartDistance) * this.touchStartScale;
+                this.scale = Math.min(this.options.maxZoom, Math.max(1, scaleDelta));
+                this.updateImageTransform();
+            } else if (e.touches.length === 1 && this.isDragging && this.scale > 1) {
+                e.preventDefault();
+                this.translateX = e.touches[0].clientX - this.startX;
+                this.translateY = e.touches[0].clientY - this.startY;
+                this.updateImageTransform();
+            }
+        });
+
+        this.modalImg.addEventListener('touchend', (e) => {
+            if (e.touches.length === 0) {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    this.modalImg.style.cursor = 'grab';
+                }
+                
+                if (this.isSwiping) {
+                    const deltaX = e.changedTouches[0].clientX - this.touchStartX;
+                    const deltaY = e.changedTouches[0].clientY - this.touchStartY;
+                    const deltaTime = Date.now() - this.touchStartTime;
+                    
+                    this.handleSwipe(deltaX, deltaY, deltaTime);
+                    
+                    this.isSwiping = false;
+                }
+            }
+        });
+
         if (this.options.enableZoom) {
             this.modalImg.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 const delta = e.deltaY > 0 ? -0.1 : 0.1;
                 this.zoom(delta);
-            });
-
-            let initialDistance = 0;
-            let initialScale = 1;
-
-            this.modalImg.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 2) {
-                    e.preventDefault();
-                    initialDistance = this.getTouchDistance(e.touches);
-                    initialScale = this.scale;
-                } else if (e.touches.length === 1 && this.scale > 1) {
-                    this.isDragging = true;
-                    this.startX = e.touches[0].clientX - this.translateX;
-                    this.startY = e.touches[0].clientY - this.translateY;
-                    this.modalImg.style.cursor = 'grabbing';
-                }
-            });
-
-            this.modalImg.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 2) {
-                    e.preventDefault();
-                    const currentDistance = this.getTouchDistance(e.touches);
-                    const scaleDelta = (currentDistance / initialDistance) * initialScale;
-                    this.scale = Math.min(this.options.maxZoom, Math.max(1, scaleDelta));
-                    this.updateImageTransform();
-                } else if (e.touches.length === 1 && this.isDragging && this.scale > 1) {
-                    e.preventDefault();
-                    this.translateX = e.touches[0].clientX - this.startX;
-                    this.translateY = e.touches[0].clientY - this.startY;
-                    this.updateImageTransform();
-                }
-            });
-
-            this.modalImg.addEventListener('touchend', (e) => {
-                if (e.touches.length === 0) {
-                    this.isDragging = false;
-                    this.modalImg.style.cursor = 'grab';
-                }
-            });
-
-            this.modalImg.addEventListener('mousedown', (e) => {
-                if (this.scale > 1) {
-                    this.isDragging = true;
-                    this.startX = e.clientX - this.translateX;
-                    this.startY = e.clientY - this.translateY;
-                    this.modalImg.style.cursor = 'grabbing';
-                }
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (this.isDragging && this.scale > 1) {
-                    this.translateX = e.clientX - this.startX;
-                    this.translateY = e.clientY - this.startY;
-                    this.updateImageTransform();
-                }
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (this.isDragging) {
-                    this.isDragging = false;
-                    this.modalImg.style.cursor = 'grab';
-                }
             });
 
             this.modalImg.addEventListener('dblclick', (e) => {
@@ -455,22 +495,50 @@ class Zoomi {
         });
     }
 
+    handleSwipe(deltaX, deltaY, deltaTime) {
+        if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+            return;
+        }
+        
+        const velocity = Math.abs(deltaX) / deltaTime;
+        const isSwipe = Math.abs(deltaX) > this.options.swipeThreshold && 
+                       (velocity > 0.3 || Math.abs(deltaX) > 100);
+        
+        if (isSwipe && this.galleryImages.length > 1) {
+            if (deltaX < 0) {
+                this.navigate(1);
+            } else {
+                this.navigate(-1);
+            }
+        }
+    }
+
     navigate(direction) {
         if (this.galleryImages.length <= 1) return;
 
         this.currentIndex = (this.currentIndex + direction + this.galleryImages.length) % this.galleryImages.length;
         const nextImage = this.galleryImages[this.currentIndex];
+        const currentX = this.translateX;
+        this.modalImg.style.transition = `transform ${this.options.animationDuration}ms ease`;
+        this.translateX = direction * 100;
+        this.updateImageTransform();
         
-        this.resetZoom();
-        this.modalImg.src = nextImage.src;
-        
-        if (this.options.showCaption) {
-            const caption = nextImage.getAttribute('alt') || nextImage.getAttribute('title') || '';
-            this.modalCaption.textContent = caption;
-            this.modalCaption.style.display = caption ? 'block' : 'none';
-        }
+        setTimeout(() => {
+            this.resetZoom();
+            this.modalImg.src = nextImage.src;
+            
+            if (this.options.showCaption) {
+                const caption = nextImage.getAttribute('alt') || nextImage.getAttribute('title') || '';
+                this.modalCaption.textContent = caption;
+                this.modalCaption.style.display = caption ? 'block' : 'none';
+            }
+            
+            this.currentImage = nextImage;
 
-        this.currentImage = nextImage;
+            setTimeout(() => {
+                this.modalImg.style.transition = '';
+            }, 50);
+        }, this.options.animationDuration);
     }
 
     getTouchDistance(touches) {
