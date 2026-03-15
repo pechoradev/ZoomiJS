@@ -31,8 +31,8 @@
 | preloadCount | number | 2 | Сколько изображений предзагружать в галерее |
 | navButtonClass | string | 'simple-image-modal-nav' | Класс для кнопок навигации в галерее |
 | modalClass | string | 'simple-image-modal' | Класс для модального окна — можно переопределить для своих стилей |
-| modalContentClass | string | `'simple-image-modal-content' | Класс для контейнера с контентом |
-| closeButtonClass | string | `'simple-image-modal-close' | Класс для кнопки закрытия |
+| modalContentClass | string | 'simple-image-modal-content' | Класс для контейнера с контентом |
+| closeButtonClass | string | 'simple-image-modal-close' | Класс для кнопки закрытия |
 | captionClass | string | 'simple-image-modal-caption' | Класс для подписи под изображением |
 | closeOnClick | boolean | true | Закрытие по клику на фон |
 | closeOnEsc | boolean | true | Закрытие по клавише ESC |
