@@ -1,8 +1,7 @@
 # ZoomiJS 📸
 
 Простая и легкая JavaScript-библиотека для автоматического открытия изображений в модальном окне. Никаких зависимостей, просто подключи и пользуйся!
-[![Size](https://img.shields.io/bundlephobia/min/zoomijs)](https://bundlephobia.com/package/zoomijs)
-[![Size gzip](https://img.shields.io/bundlephobia/minzip/zoomijs)](https://bundlephobia.com/package/zoomijs)
+![Size](https://img.shields.io/badge/size-22KB%20min%20%7C%2011KB%20gzip-lightgrey)
 
 ## ✨ Возможности
 
