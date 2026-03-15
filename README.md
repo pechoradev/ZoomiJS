@@ -23,24 +23,24 @@
 
 | Опция | Тип | По умолчанию | Описание |
 |-------|-----|--------------|----------|
-| `selector` | `string` | `'img'` | CSS селектор(ы) для изображений (можно несколько через запятую) |
-| `excludeSelector` | `string` | `null` | CSS селектор для исключения изображений |
-| `skipLinkedImages` | `boolean` | `true` | Если `true`, изображения внутри тега `<a>` не открываются в модальном окне, а работают как обычные ссылки |
-| `galleryContainer` | `string|null` | `null` | Контейнер для группировки в галерею |
-| `zoomStep` ➕ | `number` | `0.1` | Шаг увеличения при зуме колёсиком |
-| `preloadCount` ➕ | `number` | `2` | Сколько изображений предзагружать в галерее |
-| `navButtonClass` | `string` | `'simple-image-modal-nav'` | Класс для кнопок навигации в галерее |
-| `modalClass` | `string` | `'simple-image-modal'` | Класс для модального окна — можно переопределить для своих стилей |
-| `modalContentClass` | `string` | `'simple-image-modal-content'` | Класс для контейнера с контентом |
-| `closeButtonClass` | `string` | `'simple-image-modal-close'` | Класс для кнопки закрытия |
-| `captionClass` | `string` | `'simple-image-modal-caption'` | Класс для подписи под изображением |
-| `closeOnClick` | `boolean` | `true` | Закрытие по клику на фон |
-| `closeOnEsc` | `boolean` | `true` | Закрытие по клавише ESC |
-| `showCaption` | `boolean` | `true` | Показывать подпись (alt/title) |
-| `enableZoom` | `boolean` | `true` | Включить зум |
-| `maxZoom` | `number` | `3` | Максимальный коэффициент зума |
-| `animationDuration` | `number` | `300` | Длительность анимации в мс |
-| `swipeThreshold` | `number` | `50` | Минимальное расстояние в пикселях для распознавания свайпа при навигации по галерее |
+| selector | string | 'img' | CSS селектор(ы) для изображений (можно несколько через запятую) |
+| excludeSelector | string | null | CSS селектор для исключения изображений |
+| skipLinkedImages | boolean | true | Если `true`, изображения внутри тега `<a>` не открываются в модальном окне, а работают как обычные ссылки |
+| galleryContainer | string|null | null | Контейнер для группировки в галерею |
+| zoomStep | number | 0.1 | Шаг увеличения при зуме колёсиком |
+| preloadCount | number | 2 | Сколько изображений предзагружать в галерее |
+| navButtonClass | string | 'simple-image-modal-nav' | Класс для кнопок навигации в галерее |
+| modalClass | string | 'simple-image-modal' | Класс для модального окна — можно переопределить для своих стилей |
+| modalContentClass | string | `'simple-image-modal-content' | Класс для контейнера с контентом |
+| closeButtonClass | string | `'simple-image-modal-close' | Класс для кнопки закрытия |
+| captionClass | string | 'simple-image-modal-caption' | Класс для подписи под изображением |
+| closeOnClick | boolean | true | Закрытие по клику на фон |
+| closeOnEsc | boolean | true | Закрытие по клавише ESC |
+| showCaption | boolean | true | Показывать подпись (alt/title) |
+| enableZoom |boolean | true | Включить зум |
+| maxZoom | number | 3 | Максимальный коэффициент зума |
+| animationDuration | number | 300 | Длительность анимации в мс |
+| swipeThreshold | number | 50 | Минимальное расстояние в пикселях для распознавания свайпа при навигации по галерее |
 
 ## 📋 Методы API
 
